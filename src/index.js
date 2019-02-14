@@ -6,27 +6,53 @@ class MarkdownToolbar {
     this.quill = quill
     this.options = options
 
-    document.getElementById('markdownButton').onmousedown = function(event) {
+    document.getElementById('markdownButton').onmousedown = event => {
       let selection = this.quill.getSelection()
       if (selection.length === 0) return
 
-      const lines = this.quill.getLines(selection.index, selection.length)
-      lines.forEach(line => {
+      let lines = this.quill.getLines(selection.index, selection.length)
+      // IDEA: while(lines.pop and check lines.empty?)
+      lines.forEach((line, index) => {
         const lineText = line.domNode.textContent
-
+// TODO: IDEA 코드 블럭이 있는지 우선 체크 -> 포매팅 -> 그 다음 한줄짜리들 수정
         for (let match of this.matches) {
           const matchedText = lineText.match(match.pattern)
           if (matchedText) {
             console.log('matched', match.name, lineText)
-            match.action(lineText, match.pattern, this.quill.getIndex(line))
+            
+            const lineStartIndex = this.quill.getIndex(line)
+            // TODO: Code smell
+            if (match.name === 'code-block') {
+              lines.slice(index, lines.length).forEach(line => {
+                const lineText = line.domNode.textContent
+                const matchedText = lineText.match(match.lineEndPattern)
+                if (matchedText) {
+                  const result = Quill.find(line.domeNode)
+                  console.log('result :', result)
+                }
+              })
+              
+              this.quill.setSelection(lineStartIndex, lastIndex - lineStartIndex)
+              const multiLineSelection = this.quill.getSelection()
+              const multiLines = this.quill.getLines(multiLineSelection.index, multiLineSelection.length)
+              for (let index = 0; index < multiLines.length; index++) {
+                lines.shift()
+              }
 
+              match.action(lineStartIndex, lastIndex)
+            } else {
+              match.action(lineText, match.pattern, lineStartIndex)
+            }
+
+            lines.shift()
             return
           }
         }
+
+        lines.shift()
       })
-    }.bind(this)
+    }
     
-    this.ignoreTags = ['PRE']
     this.matches = [
       {
         name: 'header',
@@ -50,13 +76,12 @@ class MarkdownToolbar {
       },
       {
         name: 'code-block',
-        pattern: /^`{3}/g,
-        action: (text, pattern, lineStartIndex) => {
-          // Need to defer this action https://github.com/quilljs/quill/issues/1134
-          setTimeout(() => {
-            this.quill.formatLine(lineStartIndex, 1, 'code-block', true)
-            this.quill.deleteText(lineStartIndex, 4)
-          }, 0)
+        pattern: /^`{3}\s*$/g,
+        lineEndPattern: this.pattern,
+        action: (lineStartIndex, lineEndIndex) => {
+          this.quill.formatLine(lineStartIndex, lineEndIndex - lineStartIndex, 'code-block', true)
+          this.quill.deleteText(lineStartIndex, 4)
+          this.quill.deleteText(lineEndIndex, 4)
         }
       },
       {
