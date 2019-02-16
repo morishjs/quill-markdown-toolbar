@@ -2,11 +2,11 @@ import HorizontalRule from './formats/hr'
 Quill.register('formats/horizontal', HorizontalRule)
 
 class MarkdownToolbar {
-  constructor (quill, options) {
+  constructor(quill, options) {
     this.quill = quill
     this.options = options
 
-    document.getElementById('markdownButton').onmousedown = function(event) {
+    document.getElementById('markdownButton').onmousedown = (event) => {
       let selection = this.quill.getSelection()
       if (selection.length === 0) return
 
@@ -24,18 +24,16 @@ class MarkdownToolbar {
           }
         }
       })
-    }.bind(this)
-    
-    this.ignoreTags = ['PRE']
-    this.matches = [
-      {
+    }
+
+    this.matches = [{
         name: 'header',
         pattern: /^(#){1,6}\s/g,
         action: (text, pattern, lineStartIndex) => {
           var match = pattern.exec(text)
           if (!match) return
           const size = match[0].length
-         
+
           this.quill.formatLine(lineStartIndex, text.length, 'header', size - 1)
           this.quill.deleteText(lineStartIndex, size)
         }
@@ -52,11 +50,8 @@ class MarkdownToolbar {
         name: 'code-block',
         pattern: /^`{3}/g,
         action: (text, pattern, lineStartIndex) => {
-          // Need to defer this action https://github.com/quilljs/quill/issues/1134
-          setTimeout(() => {
-            this.quill.formatLine(lineStartIndex, 1, 'code-block', true)
-            this.quill.deleteText(lineStartIndex, 4)
-          }, 0)
+          this.quill.formatLine(lineStartIndex + 4, 1, 'code-block', true)
+          this.quill.deleteText(lineStartIndex, 4)
         }
       },
       {
@@ -72,7 +67,10 @@ class MarkdownToolbar {
           if (text.match(/^([*_ \n]+)$/g)) return
 
           this.quill.deleteText(startIndex, annotatedText.length)
-          this.quill.insertText(startIndex, matchedText, {bold: true, italic: true})
+          this.quill.insertText(startIndex, matchedText, {
+            bold: true,
+            italic: true
+          })
         }
       },
       {
@@ -88,7 +86,9 @@ class MarkdownToolbar {
           if (text.match(/^([*_ \n]+)$/g)) return
 
           this.quill.deleteText(startIndex, annotatedText.length)
-          this.quill.insertText(startIndex, matchedText, {bold: true})
+          this.quill.insertText(startIndex, matchedText, {
+            bold: true
+          })
         }
       },
       {
@@ -104,7 +104,9 @@ class MarkdownToolbar {
           if (text.match(/^([*_ \n]+)$/g)) return
 
           this.quill.deleteText(startIndex, annotatedText.length)
-          this.quill.insertText(startIndex, matchedText, {italic: true})
+          this.quill.insertText(startIndex, matchedText, {
+            italic: true
+          })
         }
       },
       {
@@ -120,7 +122,9 @@ class MarkdownToolbar {
           if (text.match(/^([*_ \n]+)$/g)) return
 
           this.quill.deleteText(startIndex, annotatedText.length)
-          this.quill.insertText(startIndex, matchedText, {strike: true})
+          this.quill.insertText(startIndex, matchedText, {
+            strike: true
+          })
         }
       },
       {
@@ -136,7 +140,9 @@ class MarkdownToolbar {
           if (text.match(/^([*_ \n]+)$/g)) return
 
           this.quill.deleteText(startIndex, annotatedText.length)
-          this.quill.insertText(startIndex, matchedText, {code: true})
+          this.quill.insertText(startIndex, matchedText, {
+            code: true
+          })
         }
       },
       {
@@ -150,10 +156,10 @@ class MarkdownToolbar {
       },
       {
         name: 'asterisk-ul',
-        pattern: /^[\*|\+]\s/g,
+        pattern: /^\s*[\*|\+|-]\s/g,
         action: (text, pattern, lineStart) => {
-            this.quill.formatLine(lineStart, 1, 'list', 'unordered')
-            this.quill.deleteText(lineStart, 2)
+          this.quill.formatLine(lineStart, 1, 'list', 'unordered')
+          this.quill.deleteText(lineStart, 2)
         }
       },
       {
@@ -164,8 +170,8 @@ class MarkdownToolbar {
           const matchedText = text.match(pattern)[0]
           const hrefLink = text.match(/(?:\((.*?)\))/g)[0]
           if (startIndex !== -1) {
-              this.quill.deleteText(lineStart, matchedText.length)
-              this.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1))
+            this.quill.deleteText(lineStart, matchedText.length)
+            this.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1))
           }
         }
       },
@@ -178,8 +184,8 @@ class MarkdownToolbar {
           const hrefText = text.match(/(?:\[(.*?)\])/g)[0]
           const hrefLink = text.match(/(?:\((.*?)\))/g)[0]
           if (startIndex !== -1) {
-              this.quill.deleteText(lineStart, matchedText.length)
-              this.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1))
+            this.quill.deleteText(lineStart, matchedText.length)
+            this.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1))
           }
         }
       }

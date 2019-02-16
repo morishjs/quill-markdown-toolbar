@@ -82,7 +82,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 Quill.register('formats/horizontal', _hr2.default);
 
 var MarkdownToolbar = function MarkdownToolbar(quill, options) {
-  var _this2 = this;
+  var _this = this;
 
   _classCallCheck(this, MarkdownToolbar);
 
@@ -90,12 +90,10 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
   this.options = options;
 
   document.getElementById('markdownButton').onmousedown = function (event) {
-    var _this = this;
-
-    var selection = this.quill.getSelection();
+    var selection = _this.quill.getSelection();
     if (selection.length === 0) return;
 
-    var lines = this.quill.getLines(selection.index, selection.length);
+    var lines = _this.quill.getLines(selection.index, selection.length);
     lines.forEach(function (line) {
       var lineText = line.domNode.textContent;
 
@@ -130,9 +128,8 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
         }
       }
     });
-  }.bind(this);
+  };
 
-  this.ignoreTags = ['PRE'];
   this.matches = [{
     name: 'header',
     pattern: /^(#){1,6}\s/g,
@@ -141,25 +138,22 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
       if (!match) return;
       var size = match[0].length;
 
-      _this2.quill.formatLine(lineStartIndex, text.length, 'header', size - 1);
-      _this2.quill.deleteText(lineStartIndex, size);
+      _this.quill.formatLine(lineStartIndex, text.length, 'header', size - 1);
+      _this.quill.deleteText(lineStartIndex, size);
     }
   }, {
     name: 'blockquote',
     pattern: /^(>)\s/g,
     action: function action(text, pattern, lineStartIndex) {
-      _this2.quill.formatLine(lineStartIndex, 1, 'blockquote', true);
-      _this2.quill.deleteText(lineStartIndex, 2);
+      _this.quill.formatLine(lineStartIndex, 1, 'blockquote', true);
+      _this.quill.deleteText(lineStartIndex, 2);
     }
   }, {
     name: 'code-block',
     pattern: /^`{3}/g,
     action: function action(text, pattern, lineStartIndex) {
-      // Need to defer this action https://github.com/quilljs/quill/issues/1134
-      setTimeout(function () {
-        _this2.quill.formatLine(lineStartIndex, 1, 'code-block', true);
-        _this2.quill.deleteText(lineStartIndex, 4);
-      }, 0);
+      _this.quill.formatLine(lineStartIndex + 4, 1, 'code-block', true);
+      _this.quill.deleteText(lineStartIndex, 4);
     }
   }, {
     name: 'bolditalic',
@@ -173,8 +167,11 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
 
       if (text.match(/^([*_ \n]+)$/g)) return;
 
-      _this2.quill.deleteText(startIndex, annotatedText.length);
-      _this2.quill.insertText(startIndex, matchedText, { bold: true, italic: true });
+      _this.quill.deleteText(startIndex, annotatedText.length);
+      _this.quill.insertText(startIndex, matchedText, {
+        bold: true,
+        italic: true
+      });
     }
   }, {
     name: 'bold',
@@ -188,8 +185,10 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
 
       if (text.match(/^([*_ \n]+)$/g)) return;
 
-      _this2.quill.deleteText(startIndex, annotatedText.length);
-      _this2.quill.insertText(startIndex, matchedText, { bold: true });
+      _this.quill.deleteText(startIndex, annotatedText.length);
+      _this.quill.insertText(startIndex, matchedText, {
+        bold: true
+      });
     }
   }, {
     name: 'italic',
@@ -203,8 +202,10 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
 
       if (text.match(/^([*_ \n]+)$/g)) return;
 
-      _this2.quill.deleteText(startIndex, annotatedText.length);
-      _this2.quill.insertText(startIndex, matchedText, { italic: true });
+      _this.quill.deleteText(startIndex, annotatedText.length);
+      _this.quill.insertText(startIndex, matchedText, {
+        italic: true
+      });
     }
   }, {
     name: 'strikethrough',
@@ -218,8 +219,10 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
 
       if (text.match(/^([*_ \n]+)$/g)) return;
 
-      _this2.quill.deleteText(startIndex, annotatedText.length);
-      _this2.quill.insertText(startIndex, matchedText, { strike: true });
+      _this.quill.deleteText(startIndex, annotatedText.length);
+      _this.quill.insertText(startIndex, matchedText, {
+        strike: true
+      });
     }
   }, {
     name: 'code',
@@ -233,23 +236,25 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
 
       if (text.match(/^([*_ \n]+)$/g)) return;
 
-      _this2.quill.deleteText(startIndex, annotatedText.length);
-      _this2.quill.insertText(startIndex, matchedText, { code: true });
+      _this.quill.deleteText(startIndex, annotatedText.length);
+      _this.quill.insertText(startIndex, matchedText, {
+        code: true
+      });
     }
   }, {
     name: 'hr',
     pattern: /^([-*]\s?){3}/g,
     action: function action(text, pattern, lineStart) {
-      _this2.quill.deleteText(lineStart, text.length);
-      _this2.quill.insertEmbed(lineStart + 1, 'hr', true, Quill.sources.USER);
-      _this2.quill.insertText(lineStart + 2, "\n", Quill.sources.SILENT);
+      _this.quill.deleteText(lineStart, text.length);
+      _this.quill.insertEmbed(lineStart + 1, 'hr', true, Quill.sources.USER);
+      _this.quill.insertText(lineStart + 2, "\n", Quill.sources.SILENT);
     }
   }, {
     name: 'asterisk-ul',
-    pattern: /^[\*|\+]\s/g,
+    pattern: /^\s*[\*|\+|-]\s/g,
     action: function action(text, pattern, lineStart) {
-      _this2.quill.formatLine(lineStart, 1, 'list', 'unordered');
-      _this2.quill.deleteText(lineStart, 2);
+      _this.quill.formatLine(lineStart, 1, 'list', 'unordered');
+      _this.quill.deleteText(lineStart, 2);
     }
   }, {
     name: 'image',
@@ -259,8 +264,8 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
       var matchedText = text.match(pattern)[0];
       var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
       if (startIndex !== -1) {
-        _this2.quill.deleteText(lineStart, matchedText.length);
-        _this2.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1));
+        _this.quill.deleteText(lineStart, matchedText.length);
+        _this.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1));
       }
     }
   }, {
@@ -272,8 +277,8 @@ var MarkdownToolbar = function MarkdownToolbar(quill, options) {
       var hrefText = text.match(/(?:\[(.*?)\])/g)[0];
       var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
       if (startIndex !== -1) {
-        _this2.quill.deleteText(lineStart, matchedText.length);
-        _this2.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1));
+        _this.quill.deleteText(lineStart, matchedText.length);
+        _this.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1));
       }
     }
   }];
