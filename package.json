@@ -7,7 +7,9 @@
   },
   "author": "Junsuk Park",
   "license": "BSD-3-Clause",
-  "dependencies": {},
+  "dependencies": {
+    "quill": "^1.3.6"
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
