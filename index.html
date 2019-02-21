@@ -43,16 +43,11 @@
 
 <body data-gr-c-s-loaded="true">
   <div class="container">
-    <h1 class="title">Quill Markdown Shortcuts</h1>
-    <a href="https://github.com/patleeman/quill-markdown-shortcuts">Go to the Github Repo</a>
+    <h1 class="title">Quill Markdown Toolbar</h1>
     <p>
-      Type some markdown below to test.
+      Copy markdown text and paste.
     </p>
-    <p>
-      <strong>How it works:</strong> This library registers a handler that listens to spaces, looks at the current line
-      and sees if there is any markdown in the current line. If so, it will convert it to the relevant quill format.
-    </p>
-
+    
     <div class="example">
       <div class="editor-wrapper">
         <div id="editor" class="ql-container ql-snow">
@@ -125,10 +120,6 @@ Fenced Code block
           'markdown-toolbar': true
         }
       });
-      var markdownToolbar = new MarkdownToolbar(quill)
-
-      var toolbar = quill.getModule('toolbar')
-      toolbar.addHandler('markdown', markdownToolbar.markdownHandler.bind(markdownToolbar))
     </script>
   </div>
 </body>

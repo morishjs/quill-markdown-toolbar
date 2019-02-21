@@ -102,6 +102,10 @@ var MarkdownToolbar = function (_Module) {
     var _this = _possibleConstructorReturn(this, (MarkdownToolbar.__proto__ || Object.getPrototypeOf(MarkdownToolbar)).call(this, quill, options));
 
     _this.quill = quill;
+
+    var toolbar = quill.getModule('toolbar');
+    toolbar.addHandler('markdown', _this.markdownHandler.bind(_this));
+
     _this.matches = [{
       name: 'header',
       pattern: /^(#){1,6}\s/g,
@@ -256,7 +260,7 @@ var MarkdownToolbar = function (_Module) {
     }];
 
     var markdown = document.querySelector('.ql-markdown');
-    markdown.innerHTML = '<svg viewbox="0 0 18 18"><circle class="ql-fill" cx="7" cy="7" r="1"></circle><circle class="ql-fill" cx="11" cy="7" r="1"></circle><path class="ql-stroke" d="M7,10a2,2,0,0,0,4,0H7Z"></path><circle class="ql-stroke" cx="9" cy="9" r="6"></circle></svg>';
+    markdown.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="27" height="128" viewBox="0 0 208 128"><rect width="198" height="118" x="5" y="5" ry="10" stroke="#000" stroke-width="10" fill="none"/><path d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"/></svg>';
     return _this;
   }
 
