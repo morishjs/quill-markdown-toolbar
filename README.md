@@ -5,9 +5,14 @@ Quill.js module that converts pasted markdown to rich text formatting.
 
 ## Install using CDN
 
+```
+<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.2/dist/markdownToolbar.min.js">
+```
+
+## Register a module
 ```html
 <script src="https://cdn.quilljs.com/1.3.1/quill.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.1/dist/markdownToolbar.min.js">
+<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.2/dist/markdownToolbar.min.js">
 <script>
   Quill.register('modules/markdown-module', MarkdownToolbar);
   const toolbarOptions = {
