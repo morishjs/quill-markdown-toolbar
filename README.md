@@ -23,21 +23,21 @@ npm i quill-markdown-toolbar
   const toolbarOptions = {
       container: [
         ['bold', 'italic', 'underline', 'strike'],
-        ['markdown'],
+        ['markdown'], // Add this.
       ],
-      handlers: {
-      'markdown': function () {}
+      handlers: { // Add this.
+      'markdown': function () {} 
       }
     };
 
   Quill.register({
-    'modules/markdown-toolbar': MarkdownToolbar
+    'modules/markdown-toolbar': MarkdownToolbar // Add this.
   })
   var quill = new Quill('#editor', {
     theme: 'snow',
     modules: {
       toolbar: toolbarOptions,
-      'markdown-toolbar': true
+      'markdown-toolbar': true // Add this.
     }
   });
 </script>  
