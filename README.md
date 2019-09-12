@@ -12,7 +12,7 @@ npm i quill-markdown-toolbar
 ## Install using CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.2/dist/markdownToolbar.min.js">
+<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.1.0/dist/markdownToolbar.min.js">
 ```
 
 ## Register a module
