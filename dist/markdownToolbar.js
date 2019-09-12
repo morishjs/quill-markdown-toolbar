@@ -126,10 +126,12 @@ var MarkdownToolbar = function (_Module) {
       }
     }, {
       name: 'code-block',
+      multiline: true,
       pattern: /^`{3}/g,
-      action: function action(text, pattern, lineStartIndex) {
-        _this.quill.formatLine(lineStartIndex + 4, 1, 'code-block', true);
-        _this.quill.deleteText(lineStartIndex, 4);
+      action: function action(startIndex, endIndex) {
+        _this.quill.formatText(startIndex + 4, endIndex - (startIndex + 4), 'code-block', true);
+        _this.quill.deleteText(startIndex, 4);
+        _this.quill.deleteText(endIndex - 4, 4);
       }
     }, {
       name: 'bolditalic',
@@ -273,36 +275,73 @@ var MarkdownToolbar = function (_Module) {
       if (selection.length === 0) return;
 
       var lines = this.quill.getLines(selection.index, selection.length);
-      lines.forEach(function (line) {
+
+      lines.forEach(function (line, index) {
         var lineText = line.domNode.textContent;
 
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+        var oldLineText = void 0;
+        while (oldLineText !== lineText) {
+          oldLineText = lineText;
 
-        try {
-          for (var _iterator = _this2.matches[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var match = _step.value;
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
 
-            var matchedText = lineText.match(match.pattern);
-            if (matchedText) {
-              console.log('matched', match.name, lineText);
-              match.action(lineText, match.pattern, _this2.quill.getIndex(line));
-
-              return;
-            }
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
           try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+            var _loop = function _loop() {
+              var match = _step.value;
+
+              var matchedText = lineText.match(match.pattern);
+
+              if (matchedText) {
+                // NOTE: `code-block` is special (multi-line)
+                if (match.name === 'code-block') {
+                  if (index + 1 === lines.length - 1) {
+                    return 'continue';
+                  }
+
+                  var restOfLines = lines.slice(index + 1, lines.length);
+                  var lastIndex = restOfLines.findIndex(function (l) {
+                    return l.domNode.textContent.match(match.pattern);
+                  });
+                  if (lastIndex === -1) {
+                    return 'continue';
+                  }
+
+                  match.action(_this2.quill.getIndex(line), _this2.quill.getIndex(restOfLines[lastIndex]));
+                  lines.splice(index, lastIndex + 1);
+
+                  return 'break';
+                } else {
+                  match.action(lineText, match.pattern, _this2.quill.getIndex(line));
+                  lineText = _this2.quill.getText(_this2.quill.getIndex(line), lineText.length);
+                  return 'break';
+                }
+              }
+            };
+
+            _loop2: for (var _iterator = _this2.matches[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var _ret = _loop();
+
+              switch (_ret) {
+                case 'continue':
+                  continue;
+
+                case 'break':
+                  break _loop2;}
             }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
           } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
             }
           }
         }
@@ -325,7 +364,7 @@ module.exports = MarkdownToolbar;
 var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /*!
- * Quill Editor v1.3.6
+ * Quill Editor v1.3.7
  * https://quilljs.com/
  * Copyright (c) 2014, Jason Chen
  * Copyright (c) 2013, salesforce.com
@@ -769,7 +808,19 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
       Delta.prototype.compose = function (other) {
         var thisIter = op.iterator(this.ops);
         var otherIter = op.iterator(other.ops);
-        var delta = new Delta();
+        var ops = [];
+        var firstOther = otherIter.peek();
+        if (firstOther != null && typeof firstOther.retain === 'number' && firstOther.attributes == null) {
+          var firstLeft = firstOther.retain;
+          while (thisIter.peekType() === 'insert' && thisIter.peekLength() <= firstLeft) {
+            firstLeft -= thisIter.peekLength();
+            ops.push(thisIter.next());
+          }
+          if (firstOther.retain - firstLeft > 0) {
+            otherIter.next(firstOther.retain - firstLeft);
+          }
+        }
+        var delta = new Delta(ops);
         while (thisIter.hasNext() || otherIter.hasNext()) {
           if (otherIter.peekType() === 'insert') {
             delta.push(otherIter.next());
@@ -790,6 +841,13 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
               var attributes = op.attributes.compose(thisOp.attributes, otherOp.attributes, typeof thisOp.retain === 'number');
               if (attributes) newOp.attributes = attributes;
               delta.push(newOp);
+
+              // Optimization if rest of other is just retain
+              if (!otherIter.hasNext() && equal(delta.ops[delta.ops.length - 1], newOp)) {
+                var rest = new Delta(thisIter.rest());
+                return delta.concat(rest).chop();
+              }
+
               // Other op should be delete, we could be an insert or retain
               // Insert + delete cancels out
             } else if (typeof otherOp['delete'] === 'number' && typeof thisOp.retain === 'number') {
@@ -945,6 +1003,8 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
 
       var hasOwn = Object.prototype.hasOwnProperty;
       var toStr = Object.prototype.toString;
+      var defineProperty = Object.defineProperty;
+      var gOPD = Object.getOwnPropertyDescriptor;
 
       var isArray = function isArray(arr) {
         if (typeof Array.isArray === 'function') {
@@ -974,6 +1034,35 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         return typeof key === 'undefined' || hasOwn.call(obj, key);
       };
 
+      // If name is '__proto__', and Object.defineProperty is available, define __proto__ as an own property on target
+      var setProperty = function setProperty(target, options) {
+        if (defineProperty && options.name === '__proto__') {
+          defineProperty(target, options.name, {
+            enumerable: true,
+            configurable: true,
+            value: options.newValue,
+            writable: true
+          });
+        } else {
+          target[options.name] = options.newValue;
+        }
+      };
+
+      // Return undefined instead of __proto__ if '__proto__' is not an own property
+      var getProperty = function getProperty(obj, name) {
+        if (name === '__proto__') {
+          if (!hasOwn.call(obj, name)) {
+            return void 0;
+          } else if (gOPD) {
+            // In early versions of node, obj['__proto__'] is buggy when obj has
+            // __proto__ as an own property. Object.getOwnPropertyDescriptor() works.
+            return gOPD(obj, name).value;
+          }
+        }
+
+        return obj[name];
+      };
+
       module.exports = function extend() {
         var options, name, src, copy, copyIsArray, clone;
         var target = arguments[0];
@@ -998,8 +1087,8 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
           if (options != null) {
             // Extend the base object
             for (name in options) {
-              src = target[name];
-              copy = options[name];
+              src = getProperty(target, name);
+              copy = getProperty(options, name);
 
               // Prevent never-ending loop
               if (target !== copy) {
@@ -1013,11 +1102,11 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
                   }
 
                   // Never move original objects, clone them
-                  target[name] = extend(deep, clone, copy);
+                  setProperty(target, { name: name, newValue: extend(deep, clone, copy) });
 
                   // Don't bring in undefined values
                 } else if (typeof copy !== 'undefined') {
-                  target[name] = copy;
+                  setProperty(target, { name: name, newValue: copy });
                 }
               }
             }
@@ -1944,7 +2033,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
       Quill.events = _emitter4.default.events;
       Quill.sources = _emitter4.default.sources;
       // eslint-disable-next-line no-undef
-      Quill.version = false ? 'dev' : "1.3.6";
+      Quill.version = false ? 'dev' : "1.3.7";
 
       Quill.imports = {
         'delta': _quillDelta2.default,
@@ -4371,8 +4460,8 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
           return [this.parent.domNode, offset];
         };
         LeafBlot.prototype.value = function () {
-          return _a = {}, _a[this.statics.blotName] = this.statics.value(this.domNode) || true, _a;
           var _a;
+          return _a = {}, _a[this.statics.blotName] = this.statics.value(this.domNode) || true, _a;
         };
         LeafBlot.scope = Registry.Scope.INLINE_BLOT;
         return LeafBlot;
@@ -4519,6 +4608,22 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         return 'retain';
       };
 
+      Iterator.prototype.rest = function () {
+        if (!this.hasNext()) {
+          return [];
+        } else if (this.offset === 0) {
+          return this.ops.slice(this.index);
+        } else {
+          var offset = this.offset;
+          var index = this.index;
+          var next = this.next();
+          var rest = this.ops.slice(this.index);
+          this.offset = offset;
+          this.index = index;
+          return [next].concat(rest);
+        }
+      };
+
       module.exports = lib;
 
       /***/
@@ -4628,7 +4733,13 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             } else if (clone.__isDate(parent)) {
               child = new Date(parent.getTime());
             } else if (useBuffer && Buffer.isBuffer(parent)) {
-              child = new Buffer(parent.length);
+              if (Buffer.allocUnsafe) {
+                // Node.js >= 4.5.0
+                child = Buffer.allocUnsafe(parent.length);
+              } else {
+                // Older Node.js versions
+                child = new Buffer(parent.length);
+              }
               parent.copy(child);
               return child;
             } else if (_instanceof(parent, Error)) {
@@ -6232,6 +6343,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
             var node = _get(Link.__proto__ || Object.getPrototypeOf(Link), 'create', this).call(this, value);
             value = this.sanitize(value);
             node.setAttribute('href', value);
+            node.setAttribute('rel', 'noopener noreferrer');
             node.setAttribute('target', '_blank');
             return node;
           }
@@ -11305,7 +11417,7 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
         return SnowTooltip;
       }(_base.BaseTooltip);
 
-      SnowTooltip.TEMPLATE = ['<a class="ql-preview" target="_blank" href="about:blank"></a>', '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">', '<a class="ql-action"></a>', '<a class="ql-remove"></a>'].join('');
+      SnowTooltip.TEMPLATE = ['<a class="ql-preview" rel="noopener noreferrer" target="_blank" href="about:blank"></a>', '<input type="text" data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL">', '<a class="ql-action"></a>', '<a class="ql-remove"></a>'].join('');
 
       exports.default = SnowTheme;
 

@@ -1,7 +1,12 @@
 {
   "name": "quill-markdown-toolbar",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "dist/markdownToolbar.js",
+  "keywords": [
+    "quill.js",
+    "markdown",
+    "markdown toolbar"
+  ],
   "scripts": {
     "build": "webpack"
   },
@@ -9,10 +14,10 @@
     "type": "git",
     "url": "git://github.com/park53kr/quill-markdown-toolbar.git"
   },
-  "author": "Junsuk Park",
+  "author": "Junsuk Park (park64kr63@gmail.com)",
   "license": "MIT",
   "dependencies": {
-    "quill": "^1.3.6"
+    "quill": "^1.3.7"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
