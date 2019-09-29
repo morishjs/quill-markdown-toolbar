@@ -12,13 +12,13 @@ npm i quill-markdown-toolbar
 ## Install using CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.2/dist/markdownToolbar.min.js">
+<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.1.0/dist/markdownToolbar.min.js">
 ```
 
 ## Register a module
 ```html
 <script src="https://cdn.quilljs.com/1.3.1/quill.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.0.2/dist/markdownToolbar.min.js">
+<script src="https://cdn.jsdelivr.net/npm/quill-markdown-toolbar@0.1.0/dist/markdownToolbar.min.js">
 <script>
   const toolbarOptions = {
       container: [
@@ -30,9 +30,6 @@ npm i quill-markdown-toolbar
       }
     };
 
-  Quill.register({
-    'modules/markdown-toolbar': MarkdownToolbar // Add this.
-  })
   var quill = new Quill('#editor', {
     theme: 'snow',
     modules: {
