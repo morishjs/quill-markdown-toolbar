@@ -30,9 +30,6 @@ npm i quill-markdown-toolbar
       }
     };
 
-  Quill.register({
-    'modules/markdown-toolbar': MarkdownToolbar // Add this.
-  })
   var quill = new Quill('#editor', {
     theme: 'snow',
     modules: {

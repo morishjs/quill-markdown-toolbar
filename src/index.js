@@ -1,10 +1,8 @@
 import Quill from 'quill'
-
-const Module = Quill.import('core/module');
-
 import HorizontalRule from './formats/hr'
 
 Quill.register('formats/horizontal', HorizontalRule);
+const Module = Quill.import('core/module');
 
 class MarkdownToolbar extends Module {
   constructor(quill, options) {

@@ -1,5 +1,14 @@
-var MarkdownToolbar =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["MarkdownToolbar"] = factory();
+	else
+		root["MarkdownToolbar"] = factory();
+})(typeof self !== 'undefined' ? self : this, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -61,301 +70,11 @@ var MarkdownToolbar =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _quill = __webpack_require__(1);
-
-var _quill2 = _interopRequireDefault(_quill);
-
-var _hr = __webpack_require__(8);
-
-var _hr2 = _interopRequireDefault(_hr);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Module = _quill2.default.import('core/module');
-
-_quill2.default.register('formats/horizontal', _hr2.default);
-
-var MarkdownToolbar = function (_Module) {
-  _inherits(MarkdownToolbar, _Module);
-
-  function MarkdownToolbar(quill, options) {
-    _classCallCheck(this, MarkdownToolbar);
-
-    var _this = _possibleConstructorReturn(this, (MarkdownToolbar.__proto__ || Object.getPrototypeOf(MarkdownToolbar)).call(this, quill, options));
-
-    _this.quill = quill;
-
-    var toolbar = quill.getModule('toolbar');
-    toolbar.addHandler('markdown', _this.markdownHandler.bind(_this));
-
-    _this.matches = [{
-      name: 'header',
-      pattern: /^(#){1,6}\s/g,
-      action: function action(text, pattern, lineStartIndex) {
-        var match = pattern.exec(text);
-        if (!match) return;
-        var size = match[0].length;
-
-        _this.quill.formatLine(lineStartIndex, text.length, 'header', size - 1);
-        _this.quill.deleteText(lineStartIndex, size);
-      }
-    }, {
-      name: 'blockquote',
-      pattern: /^(>)\s/g,
-      action: function action(text, pattern, lineStartIndex) {
-        _this.quill.formatLine(lineStartIndex, 1, 'blockquote', true);
-        _this.quill.deleteText(lineStartIndex, 2);
-      }
-    }, {
-      name: 'code-block',
-      multiline: true,
-      pattern: /^`{3}/g,
-      action: function action(startIndex, endIndex) {
-        _this.quill.formatText(startIndex + 4, endIndex - (startIndex + 4), 'code-block', true);
-        _this.quill.deleteText(startIndex, 4);
-        _this.quill.deleteText(endIndex - 4, 4);
-      }
-    }, {
-      name: 'bolditalic',
-      pattern: /(?:\*|_){3}(.+?)(?:\*|_){3}/g,
-      action: function action(text, pattern, lineStartIndex) {
-        var match = pattern.exec(text);
-
-        var annotatedText = match[0];
-        var matchedText = match[1];
-        var startIndex = lineStartIndex + match.index;
-
-        if (text.match(/^([*_ \n]+)$/g)) return;
-
-        _this.quill.deleteText(startIndex, annotatedText.length);
-        _this.quill.insertText(startIndex, matchedText, {
-          bold: true,
-          italic: true
-        });
-      }
-    }, {
-      name: 'bold',
-      pattern: /(?:\*|_){2}(.+?)(?:\*|_){2}/g,
-      action: function action(text, pattern, lineStartIndex) {
-        var match = pattern.exec(text);
-
-        var annotatedText = match[0];
-        var matchedText = match[1];
-        var startIndex = lineStartIndex + match.index;
-
-        if (text.match(/^([*_ \n]+)$/g)) return;
-
-        _this.quill.deleteText(startIndex, annotatedText.length);
-        _this.quill.insertText(startIndex, matchedText, {
-          bold: true
-        });
-      }
-    }, {
-      name: 'italic',
-      pattern: /(?:\*|_){1}(.+?)(?:\*|_){1}/g,
-      action: function action(text, pattern, lineStartIndex) {
-        var match = pattern.exec(text);
-
-        var annotatedText = match[0];
-        var matchedText = match[1];
-        var startIndex = lineStartIndex + match.index;
-
-        if (text.match(/^([*_ \n]+)$/g)) return;
-
-        _this.quill.deleteText(startIndex, annotatedText.length);
-        _this.quill.insertText(startIndex, matchedText, {
-          italic: true
-        });
-      }
-    }, {
-      name: 'strikethrough',
-      pattern: /(?:~~)(.+?)(?:~~)/g,
-      action: function action(text, pattern, lineStartIndex) {
-        var match = pattern.exec(text);
-
-        var annotatedText = match[0];
-        var matchedText = match[1];
-        var startIndex = lineStartIndex + match.index;
-
-        if (text.match(/^([*_ \n]+)$/g)) return;
-
-        _this.quill.deleteText(startIndex, annotatedText.length);
-        _this.quill.insertText(startIndex, matchedText, {
-          strike: true
-        });
-      }
-    }, {
-      name: 'code',
-      pattern: /`([^`\n\r]+)`/g,
-      action: function action(text, pattern, lineStart) {
-        var match = pattern.exec(text);
-
-        var annotatedText = match[0];
-        var matchedText = match[1];
-        var startIndex = lineStart + match.index;
-
-        if (text.match(/^([*_ \n]+)$/g)) return;
-
-        _this.quill.deleteText(startIndex, annotatedText.length);
-        _this.quill.insertText(startIndex, matchedText, {
-          code: true
-        });
-      }
-    }, {
-      name: 'hr',
-      pattern: /^([-*]\s?){3}/g,
-      action: function action(text, pattern, lineStart) {
-        _this.quill.deleteText(lineStart, text.length);
-        _this.quill.insertEmbed(lineStart + 1, 'hr', true, _quill2.default.sources.USER);
-        _this.quill.insertText(lineStart + 2, "\n", _quill2.default.sources.SILENT);
-      }
-    }, {
-      name: 'asterisk-ul',
-      pattern: /^\s*[\*|\+|-]\s/g,
-      action: function action(text, pattern, lineStart) {
-        _this.quill.formatLine(lineStart, 1, 'list', 'unordered');
-        _this.quill.deleteText(lineStart, 2);
-      }
-    }, {
-      name: 'image',
-      pattern: /(?:!\[(.+?)\])(?:\((.+?)\))/g,
-      action: function action(text, pattern, lineStart) {
-        var startIndex = text.search(pattern);
-        var matchedText = text.match(pattern)[0];
-        var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
-        if (startIndex !== -1) {
-          _this.quill.deleteText(lineStart, matchedText.length);
-          _this.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1));
-        }
-      }
-    }, {
-      name: 'link',
-      pattern: /(?:\[(.+?)\])(?:\((.+?)\))/g,
-      action: function action(text, pattern, lineStart) {
-        var startIndex = text.search(pattern);
-        var matchedText = text.match(pattern)[0];
-        var hrefText = text.match(/(?:\[(.*?)\])/g)[0];
-        var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
-        if (startIndex !== -1) {
-          _this.quill.deleteText(lineStart, matchedText.length);
-          _this.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1));
-        }
-      }
-    }];
-
-    var markdown = document.querySelector('.ql-markdown');
-    markdown.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="27" height="128" viewBox="0 0 208 128"><rect width="198" height="118" x="5" y="5" ry="10" stroke="#000" stroke-width="10" fill="none"/><path d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"/></svg>';
-    return _this;
-  }
-
-  _createClass(MarkdownToolbar, [{
-    key: 'markdownHandler',
-    value: function markdownHandler() {
-      var _this2 = this;
-
-      var selection = this.quill.getSelection();
-      if (selection.length === 0) return;
-
-      var lines = this.quill.getLines(selection.index, selection.length);
-
-      lines.forEach(function (line, index) {
-        var lineText = line.domNode.textContent;
-
-        var oldLineText = void 0;
-        while (oldLineText !== lineText) {
-          oldLineText = lineText;
-
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            var _loop = function _loop() {
-              var match = _step.value;
-
-              var matchedText = lineText.match(match.pattern);
-
-              if (matchedText) {
-                // NOTE: `code-block` is special (multi-line)
-                if (match.name === 'code-block') {
-                  if (index + 1 === lines.length - 1) {
-                    return 'continue';
-                  }
-
-                  var restOfLines = lines.slice(index + 1, lines.length);
-                  var lastIndex = restOfLines.findIndex(function (l) {
-                    return l.domNode.textContent.match(match.pattern);
-                  });
-                  if (lastIndex === -1) {
-                    return 'continue';
-                  }
-
-                  match.action(_this2.quill.getIndex(line), _this2.quill.getIndex(restOfLines[lastIndex]));
-                  lines.splice(index, lastIndex + 1);
-
-                  return 'break';
-                } else {
-                  match.action(lineText, match.pattern, _this2.quill.getIndex(line));
-                  lineText = _this2.quill.getText(_this2.quill.getIndex(line), lineText.length);
-                  return 'break';
-                }
-              }
-            };
-
-            _loop2: for (var _iterator = _this2.matches[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var _ret = _loop();
-
-              switch (_ret) {
-                case 'continue':
-                  continue;
-
-                case 'break':
-                  break _loop2;}
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
-        }
-      });
-    }
-  }]);
-
-  return MarkdownToolbar;
-}(Module);
-
-module.exports = MarkdownToolbar;
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13361,6 +13080,295 @@ var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbo
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2).Buffer, __webpack_require__(7)(module)))
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _quill = __webpack_require__(0);
+
+var _quill2 = _interopRequireDefault(_quill);
+
+var _hr = __webpack_require__(8);
+
+var _hr2 = _interopRequireDefault(_hr);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+_quill2.default.register('formats/horizontal', _hr2.default);
+var Module = _quill2.default.import('core/module');
+
+var MarkdownToolbar = function (_Module) {
+  _inherits(MarkdownToolbar, _Module);
+
+  function MarkdownToolbar(quill, options) {
+    _classCallCheck(this, MarkdownToolbar);
+
+    var _this = _possibleConstructorReturn(this, (MarkdownToolbar.__proto__ || Object.getPrototypeOf(MarkdownToolbar)).call(this, quill, options));
+
+    _this.quill = quill;
+
+    var toolbar = quill.getModule('toolbar');
+    toolbar.addHandler('markdown', _this.markdownHandler.bind(_this));
+
+    _this.matches = [{
+      name: 'header',
+      pattern: /^(#){1,6}\s/g,
+      action: function action(text, pattern, lineStartIndex) {
+        var match = pattern.exec(text);
+        if (!match) return;
+        var size = match[0].length;
+
+        _this.quill.formatLine(lineStartIndex, text.length, 'header', size - 1);
+        _this.quill.deleteText(lineStartIndex, size);
+      }
+    }, {
+      name: 'blockquote',
+      pattern: /^(>)\s/g,
+      action: function action(text, pattern, lineStartIndex) {
+        _this.quill.formatLine(lineStartIndex, 1, 'blockquote', true);
+        _this.quill.deleteText(lineStartIndex, 2);
+      }
+    }, {
+      name: 'code-block',
+      multiline: true,
+      pattern: /^`{3}/g,
+      action: function action(startIndex, endIndex) {
+        _this.quill.formatText(startIndex + 4, endIndex - (startIndex + 4), 'code-block', true);
+        _this.quill.deleteText(startIndex, 4);
+        _this.quill.deleteText(endIndex - 4, 4);
+      }
+    }, {
+      name: 'bolditalic',
+      pattern: /(?:\*|_){3}(.+?)(?:\*|_){3}/g,
+      action: function action(text, pattern, lineStartIndex) {
+        var match = pattern.exec(text);
+
+        var annotatedText = match[0];
+        var matchedText = match[1];
+        var startIndex = lineStartIndex + match.index;
+
+        if (text.match(/^([*_ \n]+)$/g)) return;
+
+        _this.quill.deleteText(startIndex, annotatedText.length);
+        _this.quill.insertText(startIndex, matchedText, {
+          bold: true,
+          italic: true
+        });
+      }
+    }, {
+      name: 'bold',
+      pattern: /(?:\*|_){2}(.+?)(?:\*|_){2}/g,
+      action: function action(text, pattern, lineStartIndex) {
+        var match = pattern.exec(text);
+
+        var annotatedText = match[0];
+        var matchedText = match[1];
+        var startIndex = lineStartIndex + match.index;
+
+        if (text.match(/^([*_ \n]+)$/g)) return;
+
+        _this.quill.deleteText(startIndex, annotatedText.length);
+        _this.quill.insertText(startIndex, matchedText, {
+          bold: true
+        });
+      }
+    }, {
+      name: 'italic',
+      pattern: /(?:\*|_){1}(.+?)(?:\*|_){1}/g,
+      action: function action(text, pattern, lineStartIndex) {
+        var match = pattern.exec(text);
+
+        var annotatedText = match[0];
+        var matchedText = match[1];
+        var startIndex = lineStartIndex + match.index;
+
+        if (text.match(/^([*_ \n]+)$/g)) return;
+
+        _this.quill.deleteText(startIndex, annotatedText.length);
+        _this.quill.insertText(startIndex, matchedText, {
+          italic: true
+        });
+      }
+    }, {
+      name: 'strikethrough',
+      pattern: /(?:~~)(.+?)(?:~~)/g,
+      action: function action(text, pattern, lineStartIndex) {
+        var match = pattern.exec(text);
+
+        var annotatedText = match[0];
+        var matchedText = match[1];
+        var startIndex = lineStartIndex + match.index;
+
+        if (text.match(/^([*_ \n]+)$/g)) return;
+
+        _this.quill.deleteText(startIndex, annotatedText.length);
+        _this.quill.insertText(startIndex, matchedText, {
+          strike: true
+        });
+      }
+    }, {
+      name: 'code',
+      pattern: /`([^`\n\r]+)`/g,
+      action: function action(text, pattern, lineStart) {
+        var match = pattern.exec(text);
+
+        var annotatedText = match[0];
+        var matchedText = match[1];
+        var startIndex = lineStart + match.index;
+
+        if (text.match(/^([*_ \n]+)$/g)) return;
+
+        _this.quill.deleteText(startIndex, annotatedText.length);
+        _this.quill.insertText(startIndex, matchedText, {
+          code: true
+        });
+      }
+    }, {
+      name: 'hr',
+      pattern: /^([-*]\s?){3}/g,
+      action: function action(text, pattern, lineStart) {
+        _this.quill.deleteText(lineStart, text.length);
+        _this.quill.insertEmbed(lineStart + 1, 'hr', true, _quill2.default.sources.USER);
+        _this.quill.insertText(lineStart + 2, "\n", _quill2.default.sources.SILENT);
+      }
+    }, {
+      name: 'asterisk-ul',
+      pattern: /^\s*[\*|\+|-]\s/g,
+      action: function action(text, pattern, lineStart) {
+        _this.quill.formatLine(lineStart, 1, 'list', 'unordered');
+        _this.quill.deleteText(lineStart, 2);
+      }
+    }, {
+      name: 'image',
+      pattern: /(?:!\[(.+?)\])(?:\((.+?)\))/g,
+      action: function action(text, pattern, lineStart) {
+        var startIndex = text.search(pattern);
+        var matchedText = text.match(pattern)[0];
+        var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
+        if (startIndex !== -1) {
+          _this.quill.deleteText(lineStart, matchedText.length);
+          _this.quill.insertEmbed(lineStart, 'image', hrefLink.slice(1, hrefLink.length - 1));
+        }
+      }
+    }, {
+      name: 'link',
+      pattern: /(?:\[(.+?)\])(?:\((.+?)\))/g,
+      action: function action(text, pattern, lineStart) {
+        var startIndex = text.search(pattern);
+        var matchedText = text.match(pattern)[0];
+        var hrefText = text.match(/(?:\[(.*?)\])/g)[0];
+        var hrefLink = text.match(/(?:\((.*?)\))/g)[0];
+        if (startIndex !== -1) {
+          _this.quill.deleteText(lineStart, matchedText.length);
+          _this.quill.insertText(lineStart, hrefText.slice(1, hrefText.length - 1), 'link', hrefLink.slice(1, hrefLink.length - 1));
+        }
+      }
+    }];
+
+    var markdown = document.querySelector('.ql-markdown');
+    markdown.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="27" height="128" viewBox="0 0 208 128"><rect width="198" height="118" x="5" y="5" ry="10" stroke="#000" stroke-width="10" fill="none"/><path d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"/></svg>';
+    return _this;
+  }
+
+  _createClass(MarkdownToolbar, [{
+    key: 'markdownHandler',
+    value: function markdownHandler() {
+      var _this2 = this;
+
+      var selection = this.quill.getSelection();
+      if (selection.length === 0) return;
+
+      var lines = this.quill.getLines(selection.index, selection.length);
+
+      lines.forEach(function (line, index) {
+        var lineText = line.domNode.textContent;
+
+        var oldLineText = void 0;
+        while (oldLineText !== lineText) {
+          oldLineText = lineText;
+
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            var _loop = function _loop() {
+              var match = _step.value;
+
+              var matchedText = lineText.match(match.pattern);
+
+              if (matchedText) {
+                // NOTE: `code-block` is special (multi-line)
+                if (match.name === 'code-block') {
+                  if (index + 1 === lines.length - 1) {
+                    return 'continue';
+                  }
+
+                  var restOfLines = lines.slice(index + 1, lines.length);
+                  var lastIndex = restOfLines.findIndex(function (l) {
+                    return l.domNode.textContent.match(match.pattern);
+                  });
+                  if (lastIndex === -1) {
+                    return 'continue';
+                  }
+
+                  match.action(_this2.quill.getIndex(line), _this2.quill.getIndex(restOfLines[lastIndex]));
+                  lines.splice(index, lastIndex + 1);
+
+                  return 'break';
+                } else {
+                  match.action(lineText, match.pattern, _this2.quill.getIndex(line));
+                  lineText = _this2.quill.getText(_this2.quill.getIndex(line), lineText.length);
+                  return 'break';
+                }
+              }
+            };
+
+            _loop2: for (var _iterator = _this2.matches[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var _ret = _loop();
+
+              switch (_ret) {
+                case 'continue':
+                  continue;
+
+                case 'break':
+                  break _loop2;}
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+        }
+      });
+    }
+  }]);
+
+  return MarkdownToolbar;
+}(Module);
+
+module.exports = MarkdownToolbar;
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15407,13 +15415,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _quill = __webpack_require__(0);
+
+var _quill2 = _interopRequireDefault(_quill);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var BlockEmbed = Quill.import('blots/block/embed');
+var BlockEmbed = _quill2.default.import('blots/block/embed');
 
 var HorizontalRule = function (_BlockEmbed) {
   _inherits(HorizontalRule, _BlockEmbed);
@@ -15434,4 +15448,5 @@ exports.default = HorizontalRule;
 
 /***/ })
 /******/ ]);
+});
 //# sourceMappingURL=markdownToolbar.js.map
