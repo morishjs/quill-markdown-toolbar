@@ -6,66 +6,74 @@
   <link href="https://cdn.quilljs.com/1.3.1/quill.snow.css" rel="stylesheet">
   <style>
     body {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-   }
-   pre {
-     margin: 0;
-     padding: 0;
-   }
-   .container {
-     max-width: 60%;
-     width: 100%;
-     height: 100%;
-     align-self: center;
-   }
-   .example {
-     display: flex;
-     flex-direction: row;
-     flex-wrap: nowrap;
-   }
-   .cheat-sheet {
-     flex-grow: 1;
-     margin-left: 1rem;
-   }
-   .editor-wrapper {
-     flex-grow: 3;
-   }
-   .ql-editor {
-     height: 100%;
-   }
-   .title {
-     text-align: center;
-   }
-   </style>
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 60%;
+      width: 100%;
+      height: 100%;
+      align-self: center;
+    }
+
+    .example {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+    }
+
+    .cheat-sheet {
+      flex-grow: 1;
+      margin-left: 1rem;
+    }
+
+    .editor-wrapper {
+      flex-grow: 3;
+    }
+
+    .ql-editor {
+      height: 100%;
+    }
+
+    .title {
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body data-gr-c-s-loaded="true">
-  <div class="container">
-    <h1 class="title">Quill Markdown Toolbar</h1>
-    <p>
-      Copy markdown text and paste.
-    </p>
+<div class="container">
+  <h1 class="title">Quill Markdown Toolbar</h1>
+  <p>
+    Copy markdown text and paste.
+  </p>
 
-    <div class="example">
-      <div class="editor-wrapper">
-        <div id="editor" class="ql-container ql-snow">
-          <div class="ql-editor ql-blank" data-gramm="false" contenteditable="true">
-            <p><br></p>
-          </div>
-          <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
-          <div class="ql-tooltip ql-hidden"><a class="ql-preview" target="_blank" href="about:blank"></a><input type="text"
-              data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a
-              class="ql-remove"></a></div>
+  <div class="example">
+    <div class="editor-wrapper">
+      <div id="editor" class="ql-container ql-snow">
+        <div class="ql-editor ql-blank" data-gramm="false" contenteditable="true">
+          <p><br></p>
         </div>
+        <div class="ql-clipboard" contenteditable="true" tabindex="-1"></div>
+        <div class="ql-tooltip ql-hidden"><a class="ql-preview" target="_blank" href="about:blank"></a><input
+                type="text"
+                data-formula="e=mc^2" data-link="https://quilljs.com" data-video="Embed URL"><a class="ql-action"></a><a
+                class="ql-remove"></a></div>
       </div>
+    </div>
 
-      <div class="cheat-sheet">
-        <p>
-          <strong>Supported markdown:</strong>
-        </p>
-        <pre># Headers
+    <div class="cheat-sheet">
+      <p>
+        <strong>Supported markdown:</strong>
+      </p>
+      <pre># Headers
 
 **Bold text**
 
@@ -93,8 +101,8 @@ Fenced Code block
 
 --- Horizontal Rule
         </pre>
-      </div>
     </div>
+  </div>
 
     <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
     <script src="dist/markdownToolbar.js"></script>
@@ -109,19 +117,19 @@ Fenced Code block
           }
         };
 
-      Quill.register({
-        'modules/markdown-toolbar': MarkdownToolbar.default
-      });
+    Quill.register({
+      'modules/markdown-toolbar': MarkdownToolbar.default
+    });
 
-      var quill = new Quill('#editor', {
-        theme: 'snow',
-        modules: {
-          toolbar: toolbarOptions,
-          'markdown-toolbar': true
-        }
-      });
-    </script>
-  </div>
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: toolbarOptions,
+        'markdown-toolbar': true
+      }
+    });
+  </script>
+</div>
 </body>
 
 </html>
