@@ -192,8 +192,9 @@ export default class MarkdownToolbar extends Module {
 
     lines.forEach((line, index) => {
       let lineText = line.domNode.textContent;
+      const lineIndex = this.quill.getIndex(line);
 
-      let oldLineText;
+      let oldLineText = null;
       while (oldLineText !== lineText) {
         oldLineText = lineText;
 
@@ -201,7 +202,7 @@ export default class MarkdownToolbar extends Module {
           const matchedText = lineText.match(match.pattern);
 
           if (matchedText) {
-            // NOTE: `code-block` is special (multi-line)
+            // NOTE: `code-block` is a special case (multi-line)
             if (match.name === 'code-block') {
               if (index + 1 === lines.length - 1) {
                 continue;
@@ -218,8 +219,10 @@ export default class MarkdownToolbar extends Module {
 
               break;
             } else {
-              match.action(lineText, match.pattern, this.quill.getIndex(line));
-              lineText = this.quill.getText(this.quill.getIndex(line), lineText.length);
+              match.action(lineText, match.pattern, lineIndex);
+
+              let updatedLine = this.quill.getLine(lineIndex)[0];
+              lineText = updatedLine.domNode.textContent;
               break;
             }
           }

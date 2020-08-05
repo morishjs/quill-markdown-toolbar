@@ -15842,7 +15842,10 @@ var MarkdownToolbar = /*#__PURE__*/function (_Module) {
       var lines = this.quill.getLines(selection.index, selection.length);
       lines.forEach(function (line, index) {
         var lineText = line.domNode.textContent;
-        var oldLineText;
+
+        var lineIndex = _this2.quill.getIndex(line);
+
+        var oldLineText = null;
 
         while (oldLineText !== lineText) {
           oldLineText = lineText;
@@ -15856,7 +15859,7 @@ var MarkdownToolbar = /*#__PURE__*/function (_Module) {
               var matchedText = lineText.match(match.pattern);
 
               if (matchedText) {
-                // NOTE: `code-block` is special (multi-line)
+                // NOTE: `code-block` is a special case (multi-line)
                 if (match.name === 'code-block') {
                   if (index + 1 === lines.length - 1) {
                     return "continue";
@@ -15875,8 +15878,11 @@ var MarkdownToolbar = /*#__PURE__*/function (_Module) {
                   lines.splice(index, lastIndex + 1);
                   return "break";
                 } else {
-                  match.action(lineText, match.pattern, _this2.quill.getIndex(line));
-                  lineText = _this2.quill.getText(_this2.quill.getIndex(line), lineText.length);
+                  match.action(lineText, match.pattern, lineIndex);
+
+                  var updatedLine = _this2.quill.getLine(lineIndex)[0];
+
+                  lineText = updatedLine.domNode.textContent;
                   return "break";
                 }
               }

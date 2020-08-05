@@ -1,6 +1,6 @@
 {
   "name": "quill-markdown-toolbar",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist/markdownToolbar.js",
   "keywords": [
     "quill.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/park53kr/quill-markdown-toolbar.git"
+    "url": "git://github.com/morishjs/quill-markdown-toolbar.git"
   },
   "author": "Junsuk Park (park64kr63@gmail.com)",
   "license": "MIT",
