@@ -4,7 +4,7 @@ import HorizontalRule from './formats/hr'
 Quill.register('formats/horizontal', HorizontalRule);
 const Module = Quill.import('core/module');
 
-class MarkdownToolbar extends Module {
+export default class MarkdownToolbar extends Module {
   constructor(quill, options) {
     super(quill, options);
 
@@ -228,5 +228,3 @@ class MarkdownToolbar extends Module {
     });
   }
 }
-
-module.exports = MarkdownToolbar;
